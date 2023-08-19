@@ -1,7 +1,7 @@
 package com.ulyanenko.userinfo.domain
 
 data class GitHubUser (
-    val id:Int,
+    val id:Long,
     val login: String,
     val avatar_url: String,
     val url: String,

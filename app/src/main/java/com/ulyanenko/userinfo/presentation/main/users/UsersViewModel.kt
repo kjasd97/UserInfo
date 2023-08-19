@@ -1,12 +1,10 @@
 package com.ulyanenko.userinfo.presentation.main.users
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import android.app.Application
+import androidx.lifecycle.*
+import com.ulyanenko.userinfo.data.database.AppDataBase
+import com.ulyanenko.userinfo.data.database.GitHubUserDao
+import com.ulyanenko.userinfo.data.database.GitHubUserEntity
 import com.ulyanenko.userinfo.data.mapper.GithubUserMapper
 import com.ulyanenko.userinfo.data.network.ApiFactory
 import com.ulyanenko.userinfo.domain.GitHubUser
@@ -14,24 +12,54 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class UsersViewModel : ViewModel() {
+class UsersViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val userDao: GitHubUserDao by lazy {
+        AppDataBase.getInstance(application).gitHubUserDao()
+    }
 
     private val _users: MutableStateFlow<List<GitHubUser>?> = MutableStateFlow(null)
     val users: StateFlow<List<GitHubUser>?> = _users
 
     private val mapper = GithubUserMapper()
 
+
     init {
-        loadRecommendations()
+        loadGitHubUsers()
     }
 
-    fun loadRecommendations() {
+    fun loadGitHubUsers() {
         viewModelScope.launch {
             val response = ApiFactory.apiService.loadUsers()
             val gitUsers = mapper.mapResponseToUser(response)
             _users.value = gitUsers
+
+            val gitUserEntities = gitUsers.map {
+                GitHubUserEntity(
+                    it.id,
+                    it.login,
+                    it.avatar_url,
+                    it.url
+                )
+            }
+
+            userDao.insertUsers(gitUserEntities)
         }
     }
+
+    suspend fun getCachedUsers(): List<GitHubUser> {
+        val list = userDao.getUsers().map {
+            GitHubUser(
+                it.id,
+                it.login,
+                it.avatar_url,
+                it.url
+            )
+        }
+        return list
+    }
+
+
 
 //    private val _users = MutableLiveData<List<GitHubUser>>()
 //    val users: LiveData<List<GitHubUser>> = _users
