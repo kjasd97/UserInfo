@@ -75,4 +75,8 @@ dependencies {
     kapt "androidx.room:room-compiler:2.5.2"
     implementation "androidx.room:room-ktx:2.5.2"
 
+    implementation "androidx.paging:paging-compose:1.0.0-alpha14"
+    implementation "androidx.compose.foundation:foundation:1.0.4"
+    implementation "androidx.compose.foundation:foundation-layout:1.0.4"
+
 }

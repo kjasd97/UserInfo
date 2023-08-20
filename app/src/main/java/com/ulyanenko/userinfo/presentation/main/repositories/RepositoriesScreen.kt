@@ -16,9 +16,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.ulyanenko.userinfo.domain.GitHubUser
 import com.ulyanenko.userinfo.domain.UserRepository
+import com.ulyanenko.userinfo.presentation.main.users.UserCard
 import com.ulyanenko.userinfo.presentation.main.users.UsersViewModel
 
 @Composable
@@ -27,7 +30,8 @@ fun UserRepositoriesScreen(userLogin: String, application:Application) {
     val viewModel: UsersRepositoryViewModel = viewModel(
         factory = RepViewModelFactory(userLogin,application)
     )
-    val repos = viewModel.repos.collectAsState()
+
+    val repos: LazyPagingItems<UserRepository> = viewModel.repositories.collectAsLazyPagingItems()
 
     Scaffold(
         topBar = {
@@ -38,7 +42,7 @@ fun UserRepositoriesScreen(userLogin: String, application:Application) {
             )
         }
     ) { paddingValues ->
-        if (repos.value != null) {
+        if (repos != null) {
             LazyColumn(
                 modifier = Modifier.padding(paddingValues),
                 contentPadding = PaddingValues(
@@ -48,12 +52,17 @@ fun UserRepositoriesScreen(userLogin: String, application:Application) {
                     bottom = 72.dp
                 )
             ) {
-                items(
-                    items = repos.value!!,
-                    key = { it.id }
-                ) { repo ->
-                    RepositoryItem(repo = repo)
+                items(repos.itemCount) { index ->
+                    repos[index]?.let {
+                        RepositoryItem(repo = it)
+                    }
                 }
+//                items(
+//                    items = repos.value!!,
+//                    key = { it.id }
+//                ) { repo ->
+//                    RepositoryItem(repo = repo)
+//                }
             }
         } else {
             Text(text = "Loading repositories...")
