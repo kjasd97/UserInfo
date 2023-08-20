@@ -37,7 +37,7 @@ abstract class AppDataBase : RoomDatabase() {
                 "movie_db"
             ).fallbackToDestructiveMigration().build()
             database = db
-            return database as AppDataBase
+            return db
         }
     }
 }
