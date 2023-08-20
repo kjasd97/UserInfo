@@ -1,5 +1,6 @@
 package com.ulyanenko.userinfo.presentation.main
 
+import android.app.Application
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -10,7 +11,7 @@ import com.ulyanenko.userinfo.presentation.main.repositories.UserRepositoriesScr
 import com.ulyanenko.userinfo.presentation.main.users.UserList
 
 @Composable
-fun MainScreen() {
+fun MainScreen(application: Application) {
     val navController = rememberNavController()
 
     NavHost(navController, startDestination = "users") {
@@ -26,7 +27,7 @@ fun MainScreen() {
             arguments = listOf(navArgument("userLogin") { type = NavType.StringType })
         ) { backStackEntry ->
             val userLogin = backStackEntry.arguments?.getString("userLogin") ?: ""
-            UserRepositoriesScreen(userLogin)
+            UserRepositoriesScreen(userLogin,application)
         }
     }
 }

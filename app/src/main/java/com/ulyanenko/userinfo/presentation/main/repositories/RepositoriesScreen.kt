@@ -1,5 +1,6 @@
 package com.ulyanenko.userinfo.presentation.main.repositories
 
+import android.app.Application
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -21,10 +22,10 @@ import com.ulyanenko.userinfo.domain.UserRepository
 import com.ulyanenko.userinfo.presentation.main.users.UsersViewModel
 
 @Composable
-fun UserRepositoriesScreen(userLogin: String) {
+fun UserRepositoriesScreen(userLogin: String, application:Application) {
 
     val viewModel: UsersRepositoryViewModel = viewModel(
-        factory = RepViewModelFactory(userLogin)
+        factory = RepViewModelFactory(userLogin,application)
     )
     val repos = viewModel.repos.collectAsState()
 
