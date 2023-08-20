@@ -28,14 +28,12 @@ fun UserList(
     val users: LazyPagingItems<GitHubUser> = viewModel.users.collectAsLazyPagingItems()
 
 
-    if (users != null) {
-        LazyColumn {
-            items(users.itemCount, key = { index -> users[index]?.id ?: index }) { index ->
-                users[index]?.let { UserCard(it, onUserClickListener) }
+    LazyColumn {
+        items(users.itemCount) { index ->
+            users[index]?.let {
+                UserCard(it, onUserClickListener)
             }
         }
-    } else {
-        Text(text = "Loading users...")
     }
 
 }

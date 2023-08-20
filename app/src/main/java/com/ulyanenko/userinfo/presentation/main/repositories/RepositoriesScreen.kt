@@ -42,30 +42,20 @@ fun UserRepositoriesScreen(userLogin: String, application:Application) {
             )
         }
     ) { paddingValues ->
-        if (repos != null) {
-            LazyColumn(
-                modifier = Modifier.padding(paddingValues),
-                contentPadding = PaddingValues(
-                    top = 16.dp,
-                    start = 8.dp,
-                    end = 8.dp,
-                    bottom = 72.dp
-                )
-            ) {
-                items(repos.itemCount) { index ->
-                    repos[index]?.let {
-                        RepositoryItem(repo = it)
-                    }
+        LazyColumn(
+            modifier = Modifier.padding(paddingValues),
+            contentPadding = PaddingValues(
+                top = 16.dp,
+                start = 8.dp,
+                end = 8.dp,
+                bottom = 72.dp
+            )
+        ) {
+            items(repos.itemCount) { index ->
+                repos[index]?.let {
+                    RepositoryItem(repo = it)
                 }
-//                items(
-//                    items = repos.value!!,
-//                    key = { it.id }
-//                ) { repo ->
-//                    RepositoryItem(repo = repo)
-//                }
             }
-        } else {
-            Text(text = "Loading repositories...")
         }
     }
 }

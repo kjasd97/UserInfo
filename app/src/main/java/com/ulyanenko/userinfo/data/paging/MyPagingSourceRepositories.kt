@@ -24,7 +24,7 @@ class MyPagingSourceRepositories(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, UserRepository> {
         try {
             val nextPageNumber = params.key ?: 1
-            val data = loadRepos(userName)
+            val data = loadReposFromDatabase(userName)
 
                 // Return the data as LoadResult
                 return LoadResult.Page(
