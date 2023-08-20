@@ -25,10 +25,12 @@ class UsersViewModel(application: Application) : AndroidViewModel(application) {
 
 
     init {
-        loadGitHubUsers()
+        loadGitHubUsersFromDataBase()
+
+
     }
 
-    fun loadGitHubUsers() {
+    fun loadGitHubUsersFromInternet() {
         viewModelScope.launch {
             val response = ApiFactory.apiService.loadUsers()
             val gitUsers = mapper.mapResponseToUser(response)
@@ -42,41 +44,28 @@ class UsersViewModel(application: Application) : AndroidViewModel(application) {
                     it.url
                 )
             }
-
             userDao.insertUsers(gitUserEntities)
         }
     }
 
-    suspend fun getCachedUsers(): List<GitHubUser> {
-        val list = userDao.getUsers().map {
-            GitHubUser(
-                it.id,
-                it.login,
-                it.avatar_url,
-                it.url
-            )
+    fun loadGitHubUsersFromDataBase() {
+        viewModelScope.launch {
+            val listOfUsers = userDao.getUsers().map {
+                GitHubUser(
+                    it.id,
+                    it.login,
+                    it.avatar_url,
+                    it.url
+                )
+            }
+            if (listOfUsers.isNotEmpty()) {
+                _users.value = listOfUsers
+            } else {
+                loadGitHubUsersFromInternet()
+            }
         }
-        return list
+
     }
-
-
-
-//    private val _users = MutableLiveData<List<GitHubUser>>()
-//    val users: LiveData<List<GitHubUser>> = _users
-//
-//    private val mapper = GithubUserMapper()
-//
-//    init {
-//        loadRecommendations()
-//    }
-//
-//     fun loadRecommendations() {
-//        viewModelScope.launch {
-//            val response = ApiFactory.apiService.loadUsers()
-//            val gitUsers = mapper.mapResponseToUser(response)
-//            _users.value = gitUsers
-//        }
-//    }
 
 
 }
